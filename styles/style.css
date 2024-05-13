@@ -1,0 +1,104 @@
+body {
+  font-family: 'Open Sans Condensed';
+}
+
+body main {
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 牌桌 */
+body main .game-table h1 {
+  color: white;
+  font-weight: 200;
+}
+
+body main .game-table {
+  border-radius: 30px;
+  margin-top: 30px;
+  background-color: #6D894B;
+  padding: 30px;
+  border: 10px solid rgb(131, 33, 33);
+  box-shadow: 5px 5px 2px rgba(0, 0, 0, 0.3);
+}
+
+body main .game-table .deck {
+  display: flex;
+  justify-content: space-around; /* 卡牌的排列方式（deck div中的div排列） */
+}
+
+body main .game-table .card {
+  width: 100px;   /* 卡牌尺寸 */
+  height: 150px;   /* 卡牌尺寸 */
+  background-color: #F1F2F7;
+  margin: 3px;
+  border-radius: 6px;
+  border: 1px solid white;
+  box-shadow: 8px 8px 5px rgba(0, 0, 0, 0.3);
+  /* 牌中的字 */
+  display: flex;
+  font-weight: 100;
+  font-size: 4rem;
+  justify-content: center;  /* 主軸置中 */
+  align-items: center;  /* 副軸置中 */
+  position: relative;  /* ？ */
+}
+
+body main .game-table .card span {
+  position: absolute;  /* ？ */
+  top: 3px;
+  left: 4px;
+  font-size: 20px;
+}
+
+/* 牌桌 > 動作按鈕區塊 */
+
+body main .game-table footer {
+  margin-top: 30px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+body main .game-table footer .action-button {
+  text-decoration: none;
+  color: white;
+  background-color: #0386D7;
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+  font-weight: 200;
+  width: 100px;
+  text-align: center;
+  cursor: pointer;  /* ？ */
+  z-index: 1001;  /* ？ */
+}
+
+body main .game-table footer .action-button:disabled {
+  background-color: lightgray;
+  cursor: default;
+}
+
+/* 勝利效果 start */
+h1::after {
+  position: absolute;  /* ？ */
+  border: solid 5px #d00;
+  border-radius: 50%;
+  color: #d00;
+  content: '勝';
+  font-size: 80px;
+  font-weight: bold;
+  padding: 10px;
+  margin: 0;
+  opacity: 0;
+  transform: scale(5);
+  transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.336);
+}
+
+.win h1::after {
+  opacity: .85;
+  transform: rotate(-15deg) scale(1);
+  z-index: 1000;
+}
+/* 勝利效果 end */
