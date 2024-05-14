@@ -309,6 +309,8 @@ function calcPoint(deck) { //計算莊家或玩家手上牌組的 點數
 
 // 判斷輸贏
 function checkWinner() {
+    //dealerPoint = 18; // 測試用
+    //yourPoint = 18; // 測試用
     switch(true) {
         // 1. 如果玩家 21 點，玩家贏（玩家一開始就拿到兩張牌，所以有可能一開始就21點，但莊家一開始只有拿一張，所以不可能一開始就21點，在此狀況下，莊家獲勝條件只有點數大於玩家，而此條件也順便包含莊家21點）
         case yourPoint == 21:
@@ -351,7 +353,7 @@ function showWinStamp() {
           $('.dealer-cards').addClass('win');
           break;
       case 3: // winner == 3 平手
-          //到css加入平手類別及效果
+          $('.dealer-cards').addClass('deuce');
           break;
       default: //可寫可不寫
           break;

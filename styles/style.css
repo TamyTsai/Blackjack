@@ -92,9 +92,9 @@ h1::after { /* after偽元素 ::after 在原本的元素「之後」加入內容
   content: '勝'; /* 字的內容 */
   font-size: 80px;
   font-weight: bold;
-  padding: 10px;
+  padding: 10px; /* 邊框與字的距離 */
   margin: 0;
-  opacity: 0; /* opacity 属性指定了一个元素的「不透明度」。换言之，opacity 属性指定了一个「元素后面的背景」的被覆盖程度。（0為透明） */
+  opacity: 0; /* opacity 属性指定了一个元素的「不透明度」。换言之，opacity 属性指定了一个「元素后面的背景(backgroundcolor)」的被覆盖程度。（0為透明） */
   transform: scale(5); /* CSS 函数 scale() 用于修改元素的大小。可以通过向量形式定义的缩放值来放大或缩小元素，同时可以在不同的方向设置不同的缩放值。 */
   transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.336); /* cube-bezier() 函数定义三次贝塞尔曲线（Cubic Bezier curve）。 */
 }
@@ -105,3 +105,27 @@ h1::after { /* after偽元素 ::after 在原本的元素「之後」加入內容
   z-index: 1000; /* 在三度空間中 往上移1000（不這樣寫的話，圖章會被卡片蓋住） */
 }
 /* 勝利效果 end */
+
+/* 平手效果 start */
+h2::after {
+  position: absolute; 
+  border: dashed  5px rgb(0, 0, 0); 
+  color: rgb(0, 0, 0); 
+  content: '平手'; 
+  font-size: 80px;
+  font-weight: bold;
+  padding: 10px;
+  margin-left: 305px;
+  margin-top: 137px;
+  opacity: 0;
+  transform: scale(3); 
+  transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.336);
+}
+
+
+.deuce h2::after { 
+  opacity: .85; 
+  transform: scale(1); 
+  z-index: 1000; 
+}
+/* 平手效果 end */
