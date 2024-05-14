@@ -85,11 +85,11 @@ body main .game-table footer .action-button:disabled {
 
 /* 勝利效果 start */
 h1::after { /* after偽元素 ::after 在原本的元素「之後」加入內容，同時偽元素也會「繼承」原本元素的屬性，如果原本文字是黑色，偽元素的文字也會是黑色。*/
-  position: absolute;  
-  border: solid 5px #d00;
+  position: absolute;  /* 影響 勝利蓋章效果、上下邊界寬度 */
+  border: solid  5px #d00; /* 勝利章邊線 */
   border-radius: 50%; /* 變成圓 */
-  color: #d00;
-  content: '勝';
+  color: #d00; /* 字的顏色 */
+  content: '勝'; /* 字的內容 */
   font-size: 80px;
   font-weight: bold;
   padding: 10px;
@@ -100,8 +100,8 @@ h1::after { /* after偽元素 ::after 在原本的元素「之後」加入內容
 }
 
 .win h1::after { /* 以jQuery函數在dealer-cards與your-cards類別的標籤中 再加入的win類別 */
-  opacity: .85;
-  transform: rotate(-15deg) scale(1);
-  z-index: 1000;
+  opacity: .85; /* 勝利圖章 的 不透明度 （0.85接近不透明） */
+  transform: rotate(-15deg) scale(1); /* 轉變為  往左轉15度*/
+  z-index: 1000; /* 在三度空間中 往上移1000（不這樣寫的話，圖章會被卡片蓋住） */
 }
 /* 勝利效果 end */
