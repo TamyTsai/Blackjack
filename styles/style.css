@@ -1,5 +1,6 @@
 body {
   font-family: 'Open Sans Condensed';
+  background-color: #8bc4f9;
 }
 
 body main {
@@ -25,7 +26,7 @@ body main .game-table {
 
 body main .game-table .deck {
   display: flex;
-  justify-content: space-around; /* 卡牌的排列方式（deck div中的div排列） */
+  justify-content: space-around; /* 卡牌的排列方式 分散對齊（deck div中的div排列） */
 }
 
 body main .game-table .card {
@@ -36,19 +37,21 @@ body main .game-table .card {
   border-radius: 6px;
   border: 1px solid white;
   box-shadow: 8px 8px 5px rgba(0, 0, 0, 0.3);
-  /* 牌中的字 */
+  /* 牌中的字：㊖ */
   display: flex;
   font-weight: 100;
   font-size: 4rem;
   justify-content: center;  /* 主軸置中 */
   align-items: center;  /* 副軸置中 */
-  position: relative;  /* ？ */
+  position: relative;  /* 表示它是基準元素 */
+  /* https://medium.com/ui-ux%E7%B7%B4%E5%8A%9F%E5%9D%8A/position-%E5%B1%AC%E6%80%A7%E7%9A%84%E5%9F%BA%E7%A4%8E%E6%A6%82%E5%BF%B5-5931254e5203 */
 }
 
+/* 牌裡左上角花色 */
 body main .game-table .card span {
-  position: absolute;  /* ？ */
-  top: 3px;
-  left: 4px;
+  position: absolute;  /* 絕對位置 */
+  top: 3px; /* 離上面3px */
+  left: 4px; /* 離左側4px */
   font-size: 20px;
 }
 
@@ -71,8 +74,8 @@ body main .game-table footer .action-button {
   font-weight: 200;
   width: 100px;
   text-align: center;
-  cursor: pointer;  /* ？ */
-  z-index: 1001;  /* ？ */
+  cursor: pointer;  /* 改變滑鼠游標的形狀 pointer為手指 */
+  z-index: 1001;  /* z-index 的z 代表的是z 軸（立體空間），因此透過CSS 中z-index 的最大值或最小值屬性可以將重疊的元素依照需求進行層疊排序，z-index 數字越大其物件將越上層，上層的物件可以覆蓋下層的物件。 */
 }
 
 body main .game-table footer .action-button:disabled {
@@ -81,22 +84,22 @@ body main .game-table footer .action-button:disabled {
 }
 
 /* 勝利效果 start */
-h1::after {
-  position: absolute;  /* ？ */
+h1::after { /* after偽元素 ::after 在原本的元素「之後」加入內容，同時偽元素也會「繼承」原本元素的屬性，如果原本文字是黑色，偽元素的文字也會是黑色。*/
+  position: absolute;  
   border: solid 5px #d00;
-  border-radius: 50%;
+  border-radius: 50%; /* 變成圓 */
   color: #d00;
   content: '勝';
   font-size: 80px;
   font-weight: bold;
   padding: 10px;
   margin: 0;
-  opacity: 0;
-  transform: scale(5);
-  transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.336);
+  opacity: 0; /* opacity 属性指定了一个元素的「不透明度」。换言之，opacity 属性指定了一个「元素后面的背景」的被覆盖程度。（0為透明） */
+  transform: scale(5); /* CSS 函数 scale() 用于修改元素的大小。可以通过向量形式定义的缩放值来放大或缩小元素，同时可以在不同的方向设置不同的缩放值。 */
+  transition: all 0.3s cubic-bezier(0.6, 0.04, 0.98, 0.336); /* cube-bezier() 函数定义三次贝塞尔曲线（Cubic Bezier curve）。 */
 }
 
-.win h1::after {
+.win h1::after { /* 以jQuery函數在dealer-cards與your-cards類別的標籤中 再加入的win類別 */
   opacity: .85;
   transform: rotate(-15deg) scale(1);
   z-index: 1000;
