@@ -16,7 +16,7 @@ $(document).ready(function(){ // jQuery寫法 等 DOM元素都準備好（載入
 });
 
 // 卡牌初始化 函數
-// 讓卡牌背面有字
+// 讓卡牌背面有㊖字
 function initCards() {
     // 抓出所有卡牌 裝進DOM元素allCards
     // let allCards = document.querySelectorAll('.card div');
@@ -76,7 +76,7 @@ function initButtons() {
 // 發給玩家一張牌，發給莊家一張牌，再發給玩家一張牌
 function newGame() {
     
-    // 初始化遊戲（牌組清空 點數歸零）
+    // 初始化遊戲（牌組清空 點數歸零 牌面重整（蓋回去） 移除印章）
     resetGame ();
 
     // 遊戲是否進行中 改為 是
@@ -253,6 +253,7 @@ function renderGameTable () {
 };
 
 // 重新開始遊戲（初始化） 函數
+// 牌組清空 點數歸零 牌面重整（蓋回去） 移除印章
 function resetGame () {
         deck = []; // 把牌組清為空陣列
         yourDeck = []; // 玩家牌組清為空陣列
@@ -260,6 +261,10 @@ function resetGame () {
         yourPoint = 0; //玩家點數歸零
         dealerPoint = 0; //莊家點數歸零
         winner = 0; //回到 勝負未定 狀態
+        initCards(); //牌面重整（蓋回去）
+        $('.zone').removeClass('win'); //移除勝利印章
+        $('.zone').removeClass('deuce'); //移除平手印章
+        
 };
 
 // 莊家行為 工人智慧（前提：玩家點擊 不拿了（之後不能再拿））
