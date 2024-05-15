@@ -261,10 +261,10 @@ function resetGame () {
         yourPoint = 0; //玩家點數歸零
         dealerPoint = 0; //莊家點數歸零
         winner = 0; //回到 勝負未定 狀態
-        initCards(); //牌面重整（蓋回去）
+        initCards(); //牌面重整（蓋回去）（顯示財字）
+        $('.card span').html(''); //移除花色
         $('.zone').removeClass('win'); //移除勝利印章
         $('.zone').removeClass('deuce'); //移除平手印章
-        
 };
 
 // 莊家行為 工人智慧（前提：玩家點擊 不拿了（之後不能再拿））
