@@ -66,7 +66,7 @@ function initButtons() {
     // 抓出「不拿了」按鈕，監聽click事件，事件發生後 執行 函數
     $('#action-stand').click( evt => {
         dealerDeck.push(deal());
-        dealerRound(); // 玩家點擊 不拿了（之後不能再拿） 進入 莊家行為 工人智慧（內含renderGameTable();）（決定莊家是否繼續拿牌）
+        dealerRound(); // 玩家點擊 不拿了（之後不能再拿） 進入 莊家回合 工人智慧（內含renderGameTable();）（決定莊家是否繼續拿牌）
     });
 
 };
@@ -89,7 +89,7 @@ function newGame() {
     dealerDeck.push(deal());
     yourDeck.push(deal());
 
-    renderGameTable(); // 決定畫面呈現 之 函數
+    newGameRenderGameTable(); // 點下「新的一局」時的 決定畫面呈現 之 函數（輸贏判斷函數使用newGameCheckWinner()）
     console.log('New Game')
 };
 
@@ -252,6 +252,68 @@ function renderGameTable () {
     //簡短寫法
 };
 
+// 點下「新的一局」時的 決定畫面呈現 之 函數（輸贏判斷函數使用newGameCheckWinner()）
+function newGameRenderGameTable () {
+
+    //抓出玩家卡片DOM元素，更改牌面及花色內容
+    yourDeck.forEach((card, i) => { //card為參數（目前的值），i為索引 //forEach 後面接的是一個 function，根據 forEach 的手冊的說明，這個 function 的第一個參數是「目前的值」，第二個參數是 index。所以這個 card 就是代表「目前的值」，因為這是從一整疊牌（yourDeck）開始跑 forEach 迴圈，所以我就把「目前的值」命名為「card」，如果你想換 abc 或 xyz 也都沒問題的，但為了程式碼的可讀性，建議最好可以用一眼就知道是什麼用途的名字。不過，就以這個例子來說，這裡這個 card 剛好在 function 裡面沒用到，只有用到 i 而已，所以像這種 沒用到但又必須得要帶進來的參數，通常會用底線來取代它，例如：yourDeck.forEach(( _, i) => {// }); 關於 forEach 方法可參考 https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+
+        let theCard = $(`#yourCard${i + 1}`); 
+        //用jQuery寫法抓出id為yourCard1~5的元素（玩家桌上的五張牌） 指定給變數theCard成為DOM元素 （陣列）
+        //`${}`為ES6 字串 與 變數 串接 之 寫法  //這個 `....`  包起來的意思，在 ES6 的寫法，表示會把這個符號包起來的東西進行「翻譯」
+        //i為0~4，為了變成1~5，所以要+1
+
+        theCard.html(card.cardNumber()); // cardValue()為Card類別中的函數
+        //jQuery寫法 替換掉DOM元素（玩家桌上的五張牌）對應的HTML內容
+        theCard.prev().html(card.cardSuit());
+        //jQuery方法，prev為previous，會抓到該DOM元素對應的HTML元素 的 前一個元素（不是外面一個元素）
+        //HTML：<span></span><div class="yourCard" id="yourCard1">，yourCard1 前一個元素 為 span （裝花色用的）
+        // $(`#yourCard${i + 1}`).html('A');
+    });
+    // ES5寫法：function(card,i) {.....;};
+
+    //抓出莊家卡片DOM元素，更改牌面及花色內容
+    dealerDeck.forEach((card, i) => { //card為參數，i為索引
+        let theCard = $(`#dealerCard${i + 1}`);
+        theCard.html(card.cardNumber());
+        theCard.prev().html(card.cardSuit());
+    });
+
+    // 將計算好的點數 顯示出來 並判定是否結束遊戲
+    yourPoint = calcPoint(yourDeck); //把玩家牌組 放進 calcPoint中算總點數 將回傳之數值 指定給 yourPoint //let??
+    dealerPoint = calcPoint(dealerDeck);
+
+        //判定是否結束遊戲
+    if (yourPoint >= 21 || dealerPoint >= 21) { // 玩家 或 莊家 點數大於等於21點
+        inGame = false;
+    };
+
+        // 點下「新的一局」時的 輸贏判斷 函數（只判斷玩家是否一開始就21點 並讓玩家直接獲勝）
+    newGameCheckWinner();
+
+        // 依據輸贏結果，決定把勝利效果呈現在哪
+    showWinStamp();
+
+        //抓HTML元素（「玩家」、「莊家」），改其內容（「玩家（？點）」、「莊家（?點）」）
+    $('.your-cards h1').html(`玩家（${yourPoint}點）`);
+    $('.dealer-cards h1').html(`莊家（${dealerPoint}點）`);
+
+    // 啟動 「再來一張！」與「不拿了」按鈕
+    // if (inGame) { //inGame為true的話 就執行這個程式碼區塊
+    //     $('#action-hit').attr('disabled',false); //attr為jQuery方法，更改DOM元素屬性 
+    //     $('#action-stand').attr('disabled',false);
+    //     //原HTML： <input type="button" id="action-hit" class="action-button" value="再來一張!" disabled>
+    // }
+    // else 
+    // {
+    //     $('#action-hit').attr('disabled',true);
+    //     $('#action-stand').attr('disabled',true);
+    // };
+    $('#action-hit').attr('disabled', !inGame); //遊戲進行中時（inGame為true），按鈕要可以按（disabled 要為 false），所以disabled 要被 改為 inGame狀態的相反（!inGame）
+    $('#action-stand').attr('disabled', !inGame);
+    //簡短寫法
+};
+
 // 重新開始遊戲（初始化） 函數
 // 牌組清空 點數歸零 牌面重整（蓋回去） 移除印章
 function resetGame () {
@@ -267,7 +329,7 @@ function resetGame () {
         $('.zone').removeClass('deuce'); //移除平手印章
 };
 
-// 莊家行為 工人智慧（前提：玩家點擊 不拿了（之後不能再拿））
+// 莊家回合 工人智慧（前提：玩家點擊 不拿了（之後不能再拿））
 // 決定莊家是否繼續拿牌
 // 如果因為點數 >= 玩家而停止要牌，則讓遊戲結束，並重新呈現牌桌
 function dealerRound() {
@@ -312,32 +374,32 @@ function calcPoint(deck) { //計算莊家或玩家手上牌組的 點數
         return point;
 };
 
-// 判斷輸贏
+// 普通 輸贏判斷 函數
 function checkWinner() {
-    //dealerPoint = 18; // 測試用
-    //yourPoint = 18; // 測試用
+    // dealerPoint = 18; // 測試用
+    // yourPoint = 18; // 測試用
     switch(true) {
         // 1. 如果玩家 21 點，玩家贏（玩家一開始就拿到兩張牌，所以有可能一開始就21點，但莊家一開始只有拿一張，所以不可能一開始就21點，在此狀況下，莊家獲勝條件只有點數大於玩家，而此條件也順便包含莊家21點）
-        case yourPoint == 21:
+        case yourPoint == 21: // 有可能「一開始」玩家就21點，但此時直接獲勝結束遊戲也沒關係
           winner = 1;
           break;
     
         // 2. 如果有人點數爆掉，對方贏
-        case yourPoint > 21:
+        case yourPoint > 21: // 玩家一開始只有兩張牌，所以不可能「一開始」玩家就>21
           winner = 2;
           break;
     
-        case dealerPoint > 21:
+        case dealerPoint > 21: // 莊家一開始只有一張牌，所以不可能「一開始」莊家就>21
           winner = 1;
           break;
     
         // 3. 平手
-        case dealerPoint == yourPoint:
+        case dealerPoint == yourPoint: // 有可能「一開始」雙方點數相等，所以要做另外處理
           winner = 3;
           break;
     
         // 0. 比點數 //不能放在最前面！因為前面情況只要有符合，就不會再判斷是否符合後面其他情況，這個情況放最前面，會導致 莊家即使點數爆掉，但因為先判斷到了 莊家點數大於玩家，所以還是會判斷贏家為莊家
-        case dealerPoint > yourPoint:
+        case dealerPoint > yourPoint: // 有可能「一開始」莊家點數大於玩家，所以要做另外處理
           winner = 2;
           break;
 
@@ -347,6 +409,23 @@ function checkWinner() {
           break;
       };
 };
+
+// 點下「新的一局」時的 輸贏判斷 函數（只判斷玩家是否一開始就21點 並讓玩家直接獲勝）
+function newGameCheckWinner() {
+    dealerPoint = 19; // 測試用
+    yourPoint = 18; // 測試用
+    switch(true) {
+        // 1. 如果玩家 21 點，玩家贏（玩家一開始就拿到兩張牌，所以有可能一開始就21點，但莊家一開始只有拿一張，所以不可能一開始就21點，在此狀況下，莊家獲勝條件只有點數大於玩家，而此條件也順便包含莊家21點）
+        case yourPoint == 21: // 有可能「一開始」玩家就21點，但此時直接獲勝結束遊戲也沒關係
+          winner = 1;
+          break;
+
+        // 預設 勝負未定 繼續遊戲
+        default:
+          winner = 0;
+          break;
+      }; 
+}
 
 // 依據輸贏結果，決定把勝利效果呈現在哪
 function showWinStamp() {
