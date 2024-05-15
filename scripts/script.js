@@ -89,17 +89,35 @@ function newGame() {
     dealerDeck.push(deal());
     yourDeck.push(deal());
 
+    test(); //測試用函數，沒有要測試的話，要關起來
+
     newGameRenderGameTable(); // 點下「新的一局」時的 決定畫面呈現 之 函數（輸贏判斷函數使用newGameCheckWinner()）
-    console.log('New Game')
+};
+
+// 測試用函數
+function test() {
+    // 直接控制牌組內容
+    // yourDeck = [{suit: 1,number: 1}, {suit: 2,number: 2}];
+
+    // 直接操控總點數
+    // dealerPoint = 19;
+    // yourPoint = 18;
+
+    // 檢視牌組陣列內容
+    console.log(yourDeck); //檢視玩家牌組
+    // console.log(dealerDeck); //檢視莊家牌組
+    // console.log(deck); //檢視荷官牌組
+    console.log(countACards(yourDeck));
+    console.log(calcPoint(yourDeck));
 };
 
 // 發牌 函數
 function deal() {
-    return deck.shift(); // 從deck牌組陣列中，取得第一個資料
+    return deck.shift(); // 從deck牌組陣列中，取得第一個元素
 }
 
 // 卡牌模版
-class Card { // ES6 物件導向的寫法 
+class Card { // ES6 物件導向的寫法 // 物件實字（用大括弧建立物件）
     constructor(suit,number) { //初始化卡牌要傳進的參數 suit,number 
         this.suit = suit; // 把 suit行為 傳進此class的 suit屬性（不一定要同名）
         this.number = number;
@@ -149,9 +167,9 @@ class Card { // ES6 物件導向的寫法
                 return '♦';
             }
         }
-    }
+}
 
-// 建立牌組（52張牌）（按花色、大小裝進陣列，一個整齊的牌組陣列）
+// 建立牌組（52張牌）（按花色、大小裝進陣列，整齊的牌組陣列）
 function buildDeck() {
     let deck = []; // 牌組 空陣列
 
@@ -354,30 +372,127 @@ function dealerRound() {
 
 // 計算點數 函數
 function calcPoint(deck) { //計算莊家或玩家手上牌組的 點數
-        let point = 0; // 莊家或玩家 初始點數為0
+    let point = 0; // 莊家或玩家 初始點數為0
 
-        // 把牌組丟進迴圈跑，指定 點數（計算用）回傳的值 給 point變數
-        deck.forEach(card => { //deck為此函數calcPoint(deck)之 參數 
-            point += card.cardPoint(); //card為此函數forEach裡匿名函數之參數 //把point加上card.cardPoint()的值 指定回給 變數point
-        }) // 把 參數為card的匿名函數 當成 forEach的參數在用 所以參數為card的匿名函數是callback function
+    // 把牌組丟進迴圈跑，指定 點數（計算用）回傳的值 給 point變數
+    deck.forEach(card => { //deck為此函數calcPoint(deck)之 參數 
+        point += card.cardPoint(); //card為此函數forEach裡匿名函數之參數 //把point加上card.cardPoint()的值 指定回給 變數point
+    }) // 把 參數為card的匿名函數 當成 forEach的參數在用 所以參數為card的匿名函數是callback function
+    // 判斷是否有人有A 且 點數爆掉，A改成以1點計算
+    if (point > 21) {
+        deck.forEach(card => {
+            if (card.cardNumber() === 'A') {
+                point -= 10; //將point的值-10後 指定回給point
+            } // cardNumber()（顯示在畫面上的卡牌上的數字）如果為A ，就將點數-10點（A為1或11，原本算11，但這裡點數已超過21點爆掉，所以-10變1）
+            // 現況（待優化）：會依據A的擁有數決定減幾次10，也就是多張A時會全部被當1點（如兩張A會變22點，所以就進入此流程控制，被減20，剩2，但一般來說，會想把一張A當11，一張當1，共12點）
+        })
+    }
 
-        // 判斷是否有人有A 且 點數爆掉，A改成以1點計算
-        if (point > 21) {
-            deck.forEach(card => {
-                if (card.cardNumber() === 'A') {
-                    point -= 10; //將point的值-10後 指定回給point
-                } // cardNumber()（顯示在畫面上的卡牌上的數字）如果為A ，就將點數-10點（A為1或11，原本算11，但這裡點數已超過21點爆掉，所以-10變1）
-                //多張A時會有bug
-            })
-        }
-
-        return point;
+    return point;
 };
+
+
+// 計算牌組有幾張A
+function countACards(countDeck) {
+    //把 牌 的 屬性number 的 值 放到 變數FiveCards，形成陣列
+    let FiveCards = [countDeck[0].number, countDeck[1].number];
+    if (countDeck.length >= 3) {
+        FiveCards.push(countDeck[2].number);
+    } else if (countDeck.length >= 4) {
+        FiveCards.push(countDeck[3].number);
+    } else if (countDeck.length >= 5) {
+        FiveCards.push(countDeck[4].number);
+    };
+
+    //篩選 陣列FiveCards 中 等於1的元素，形成新陣列，並回傳此新陣列之長度（即為牌組中A的張數）
+    return FiveCards.filter(function(value) {return value == 1;}).length;
+};
+
+// 計算牌組中除掉A後的分數
+// function calcPointRemoveA(deckRemoveA) {
+//     if (1 in FiveCards) {
+//         //將陣列去除A，然後計算分數
+//     };
+// };
+
+// 修正後 計算點數 函數（可應對多張A的狀況）
+// function calcPoint(deck) { //計算莊家或玩家手上牌組的 點數
+//     let point = 0; // 莊家或玩家 初始點數為0
+
+//     // 把牌組丟進迴圈跑，指定 點數（計算用）回傳的值 給 point變數
+//     deck.forEach(card => { //deck為此函數calcPoint(deck)之 參數 
+//         point += card.cardPoint(); //card為此函數forEach裡匿名函數之參數 //把point加上card.cardPoint()的值 指定回給 變數point
+//     }) // 把 參數為card的匿名函數 當成 forEach的參數在用 所以參數為card的匿名函數是callback function
+
+//     if (countACards(yourDeck) == 1) {
+//         if (point > 21) {
+//             deck.forEach(card => {
+//                 if (card.cardNumber() === 'A') {
+//                     point -= 10;
+//                 }
+//             })
+//         };
+//     } else if (countACards(yourDeck) == 2) {
+//         if (point > 31) {
+//             deck.forEach(card => {
+//                 if (card.cardNumber() === 'A') {
+//                     point -= 20;
+//                 }
+//             })
+//         };
+//     } else if (countACards(yourDeck) == 3) {
+//         if (point > 41) {
+//             deck.forEach(card => {
+//                 if (card.cardNumber() === 'A') {
+//                     point -= 30;
+//                 }
+//             })
+//         };
+//     } else if (countACards(yourDeck) == 4)  {
+//         if (point > 51) {
+//             deck.forEach(card => {
+//                 if (card.cardNumber() === 'A') {
+//                     point -= 30;
+//                 }
+//             })
+//         };
+//     };
+
+//     return point;
+// };
+
+// 修正後 計算點數 函數（可應對多張A的狀況）
+// function calcPoint(deck) { //計算莊家或玩家手上牌組的 點數
+//     let point = 0; // 莊家或玩家 初始點數為0
+
+//     // 把牌組丟進迴圈跑，指定 點數（計算用）回傳的值 給 point變數
+//     deck.forEach(card => { //deck為此函數calcPoint(deck)之 參數 
+//         point += card.cardPoint(); //card為此函數forEach裡匿名函數之參數 //把point加上card.cardPoint()的值 指定回給 變數point
+//     }) // 把 參數為card的匿名函數 當成 forEach的參數在用 所以參數為card的匿名函數是callback function
+
+//     if (countACards(yourDeck) == 1) {
+//         if (point > 21) {
+//             point -= 10;
+//         };
+//     } else if (countACards(yourDeck) == 2) {
+//         if (point > 31) {
+//             point -= 20;
+//         };
+//     } else if (countACards(yourDeck) == 3) {
+//         if (point > 41) {
+//             point -= 30;
+//         };
+//     } else if (countACards(yourDeck) == 4)  {
+//         if (point > 51) {
+//             point -= 40;
+//         };
+//     };
+
+//     return point;
+// };
 
 // 普通 輸贏判斷 函數
 function checkWinner() {
-    // dealerPoint = 18; // 測試用
-    // yourPoint = 18; // 測試用
     switch(true) {
         // 1. 如果玩家 21 點，玩家贏（玩家一開始就拿到兩張牌，所以有可能一開始就21點，但莊家一開始只有拿一張，所以不可能一開始就21點，在此狀況下，莊家獲勝條件只有點數大於玩家，而此條件也順便包含莊家21點）
         case yourPoint == 21: // 有可能「一開始」玩家就21點，但此時直接獲勝結束遊戲也沒關係
@@ -412,8 +527,6 @@ function checkWinner() {
 
 // 點下「新的一局」時的 輸贏判斷 函數（只判斷玩家是否一開始就21點 並讓玩家直接獲勝）
 function newGameCheckWinner() {
-    dealerPoint = 19; // 測試用
-    yourPoint = 18; // 測試用
     switch(true) {
         // 1. 如果玩家 21 點，玩家贏（玩家一開始就拿到兩張牌，所以有可能一開始就21點，但莊家一開始只有拿一張，所以不可能一開始就21點，在此狀況下，莊家獲勝條件只有點數大於玩家，而此條件也順便包含莊家21點）
         case yourPoint == 21: // 有可能「一開始」玩家就21點，但此時直接獲勝結束遊戲也沒關係
